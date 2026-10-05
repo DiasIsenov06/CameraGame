@@ -13,8 +13,9 @@ export class HandTracker {
       if(generation!==this.generation){stream.getTracks().forEach(t=>t.stop());throw new DOMException('Camera request cancelled','AbortError');}
       this.stream=stream;this.video.srcObject=this.stream;this.video.muted=true;this.video.playsInline=true;await this.video.play();
       if(!this.model){
-        const files=await FilesetResolver.forVisionTasks('/mediapipe/wasm');
-        this.model=await HandLandmarker.createFromOptions(files,{baseOptions:{modelAssetPath:'/mediapipe/hand_landmarker.task',delegate:'CPU'},runningMode:'VIDEO',numHands:1,minHandDetectionConfidence:.65,minHandPresenceConfidence:.65,minTrackingConfidence:.65});
+        const assets = `${import.meta.env.BASE_URL}mediapipe/`;
+        const files=await FilesetResolver.forVisionTasks(`${assets}wasm`);
+        this.model=await HandLandmarker.createFromOptions(files,{baseOptions:{modelAssetPath:`${assets}hand_landmarker.task`,delegate:'CPU'},runningMode:'VIDEO',numHands:1,minHandDetectionConfidence:.65,minHandPresenceConfidence:.65,minTrackingConfidence:.65});
       }
       if(generation!==this.generation)throw new DOMException('Camera request cancelled','AbortError');
       this.stopped=false;this.smoothing.reset();this.lastTime=-1;
